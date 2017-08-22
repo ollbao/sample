@@ -18,6 +18,10 @@ Route::get('/about','StaticPagesController@about')->name('about');
 Route::get('/signup','UsersController@create')->name('signup');
 Route::post('/users/store', 'UsersController@store')->name('users.store');//注册页面提交
 Route::get('/users/{user}', 'UsersController@show')->name('users.show');//单个用户页面
+Route::get('/users/{user}/edit', 'UsersController@edit')->name('users.edit');
+Route::patch('/users/{user}/update', 'UsersController@update')->name('users.update');
+Route::get('/users', 'UsersController@index')->name('users.index');
+Route::delete('/users/{user}', 'UsersController@destroy')->name('users.destroy');
 
 Route::get('login', 'SessionsController@create')->name('login');
 Route::post('login', 'SessionsController@store')->name('login');

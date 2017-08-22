@@ -8,12 +8,21 @@ use Auth;
 class SessionsController extends Controller
 {
 
+    public function __construct()
+    {
+        //至于许未登录用户访问create
+        $this->middleware('guest', [
+            'only' => ['create']
+        ]);
+    }
 
+    //登录页面
     public function create(){
         return view('sessions/create');
     }
 
 
+    //登录提交页面
     public function store(Request $request){
         $this->validate($request,[
             'email' => 'required|email|max:255',
@@ -26,7 +35,7 @@ class SessionsController extends Controller
         if (Auth::attempt($credentials,$request->has('remember'))) {
             // 登录成功后的相关操作
             session()->flash('success', '欢迎回来！');
-            return redirect()->route('users.show', [Auth::user()]);
+            return redirect()->intended(route('users.show', [Auth::user()]));
         } else {
             // 登录失败后的相关操作
             session()->flash('danger', '用户名或密码错误');
@@ -36,6 +45,7 @@ class SessionsController extends Controller
     }
 
 
+    //退出登录
     public function destroy(){
         Auth::logout();
         session()->flash('success', '您已成功退出！');
