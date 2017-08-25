@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use App\Notifications\ResetPassword;
+use Auth;
 
 class User extends Authenticatable
 {
@@ -27,14 +28,6 @@ class User extends Authenticatable
     protected $hidden = [
         'password', 'remember_token',
     ];
-
-
-    /**
-     * 指定一个用户有多条微博
-     */
-    public function statuses(){
-        return $this->hasMany(Status::class);
-    }
 
 
     public function gravatar($size = '100')
@@ -61,7 +54,64 @@ class User extends Authenticatable
 
     public function feed()
     {
-        return $this->statuses()
+        $user_ids = Auth::user()->followings->pluck('id')->toArray();
+        array_push($user_ids, Auth::user()->id);
+        return Status::whereIn('user_id', $user_ids)
+            ->with('user')
             ->orderBy('created_at', 'desc');
+    }
+
+    /**
+     * 关注(成为粉丝)
+     * @param $user_ids
+     */
+    public function follow($user_ids)
+    {
+        $this->followings()->sync((array)$user_ids, false);
+    }
+
+    /**
+     * 取消关注
+     * @param $user_ids
+     */
+    public function unfollow($user_ids)
+    {
+        $this->followings()->detach((array)$user_ids);
+    }
+
+    /**
+     * 一个用户有多个粉丝
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function followers()
+    {
+        return $this->belongsToMany(User::Class, 'followers', 'user_id', 'follower_id');
+    }
+
+    /**
+     * 一个粉丝可以关注多个用户
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function followings()
+    {
+        return $this->belongsToMany(User::Class, 'followers', 'follower_id', 'user_id');
+    }
+
+
+    /**
+     * 判断当前用户有没有关注$usr_id用户
+     * @param $user_id 被关注的用户id
+     * @return mixed
+     */
+    public function isFollowing($user_id)
+    {
+        return $this->followings->contains($user_id);
+    }
+
+    /**
+     * 指定一个用户有多条微博
+     */
+    public function statuses(){
+        return $this->hasMany(Status::class);
     }
 }
