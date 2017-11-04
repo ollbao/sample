@@ -14,6 +14,7 @@
 Route::get('/','StaticPagesController@home')->name('home');
 Route::get('/help','StaticPagesController@help')->name('help');
 Route::get('/about','StaticPagesController@about')->name('about');
+Route::get('/test','StaticPagesController@test')->name('test');
 
 Route::get('/signup','UsersController@create')->name('signup');
 Route::post('/users/store', 'UsersController@store')->name('users.store');//注册页面提交
@@ -45,4 +46,7 @@ Route::get('/users/{user}/followers', 'UsersController@followers')->name('users.
 //关注和取消关注
 Route::post('/users/followers/{user}', 'FollowersController@store')->name('followers.store');
 Route::delete('/users/followers/{user}', 'FollowersController@destroy')->name('followers.destroy');
+
+
+
 

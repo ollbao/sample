@@ -22,7 +22,10 @@ class UsersController extends Controller
     }
 
 
-    //用户页面
+    /**
+     * [index description]
+     * @return [type] [description]
+     */
     public function index(){
         $users = User::paginate(10);
         return view('users.index', compact('users'));

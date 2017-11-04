@@ -175,6 +175,8 @@ return [
         // App\Providers\BroadcastServiceProvider::class,
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
+        //ide提示
+        Barryvdh\LaravelIdeHelper\IdeHelperServiceProvider::class
 
     ],
 
